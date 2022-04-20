@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Category;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -74,6 +75,10 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        if(!Gate::denies('update-post', $post)){
+            abort(403, 'Unauthorized action');
+        }
+
         $categories = Category::all();
         return view('post.edit', compact('post' , 'categories'));
     }
@@ -98,19 +103,21 @@ class PostController extends Controller
             $imageName = $request->immage->store('posts');
 
          $arrayUpdate = array_merge($arrayUpdate,
-         ['image'=> $imageName]);
+         ['immage'=> $imageName]);
         
 
-        $Post->update([
+        $post->update([
             'title' => $request->title,
             'Body' => $request->Body,
-            'image' => $request->immage,
+            'immage' => $request->immage,
             'category_id' => $request->category,
         ]);
     }
         
 
         $post->update($arrayUpdate);
+        return redirect()->route('dashboard')->with('success', 'Post Updated Successfully');
+
     }
 
     /**
@@ -121,6 +128,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        if(!Gate::denies('destroy-post', $post)){
+            abort(403, 'Unauthorized action');
+        }
+
+        $post->delete();
+        return redirect()->route('dashboard')->with('success', 'Post Deleted Successfully');
     }
 }

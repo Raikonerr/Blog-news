@@ -1,6 +1,5 @@
 <?php
-use App\models\Category;
-use App\models\User;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,17 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('Body');
-            $table->string('immage');
+            $table->foreignId('user_id')->constrainted()->onDelete('cascade');
+            $table->string('body');
+            $table->foreignId('post_id')->constrainted()->onDelete('cascade');
+            $table->string('commentable_type');
             $table->timestamps();
-            
-            $table->foreignIdfor(User::class);
-            $table->foreignIdfor(Category::class);
-
-        
         });
     }
 
@@ -35,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('comments');
     }
 };

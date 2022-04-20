@@ -18,8 +18,12 @@ class Post extends Model
     public static function boot(){
         parent::boot();
 
-        static::creating(function($post){
+        self::creating(function($post){
             $post->user()->associate(auth()->user()->id);
+            $post->category()->associate(request()->category);
+        });
+
+        self::updating(function($post){
             $post->category()->associate(request()->category);
         });
     }
@@ -34,5 +38,9 @@ class Post extends Model
 
     public function getTitleAttribute($value){
         return ucfirst($value);
+    }
+
+    public function comments(){
+        return $this->hasMany(Comment::class );
     }
 }

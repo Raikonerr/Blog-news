@@ -17,14 +17,16 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         
-       $categories = Category::factory(10)->create();
+        Category::factory(10)->create();
+        User::factory(10)->create();
+        Post::factory(10)->create();
 
-        User::factory(10)->create()->each(function ($user) use ($categories){
-            Post::factory(rand(1, 3))->create([
-                    'user_id' => $user->id,
-                    'category_id' => ($categories->random(1)->first())->id
-            ]);
-        });
+        // User::factory(10)->create()->each(function ($user) use ($categories){
+        //     Post::factory(rand(1, 3))->create([
+        //             'user_id' => $user->id,
+        //             'category_id' => ($categories->random(1)->first())->id
+        //     ]);
+        // });
         
     }
 }
